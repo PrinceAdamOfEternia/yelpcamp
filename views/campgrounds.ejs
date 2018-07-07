@@ -1,8 +1,31 @@
-<h1>Campgrounds Page</h1>
+<% include partials/header %>
 
-<% sites.forEach(function(campground){ %> 
-    <div>
-        <h4><%= campground.name %></h4>
-        <img src="<%= campground.image %>">
+    <div class="container">
+        <header class="jumbotron">
+            <div class="container">
+                <h1>Welcome to YelpCamp!</h1>
+                <p>Enjoy our handpicked Australian campsites</p>
+                <p>
+                    <a class="btn btn-primary btn-lg" href="/campgrounds/new">Add a new campground</a>
+                </p>
+            </div>
+        </header>
+        
+        <!-- Create rows of cards to display the campgrounds -->
+        <div class="row text-center" style="display: flex; flex-wrap: wrap;">
+            <% sites.forEach(function(campground){ %> 
+                <div class="col-md-3 col-sm-6">
+                    <div class="thumbnail">
+                        <img src="<%= campground.image %>">
+                        
+                        <!-- Place the text in the thumbnail as a caption -->
+                        <div class="caption">
+                            <h4><%= campground.name %></h4>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
     </div>
-<% }); %>
+    
+<% include partials/footer %>
