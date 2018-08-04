@@ -2,28 +2,27 @@
 //                   DEPENDENCIES
 // ----------------------------------------------
 
-var express = require("express");
-var app = express();
+    // packages
+var express     = require("express"),
+    bodyParser  = require("body-parser"),
+    mongoose    = require("mongoose"),
+    app         = express(),
+    // Mongoose models
+    Campground  = require("./models/campground"),
+    Comment     = require("./models/comment"),
+    // Other
+    seedDB      = require("./seeds");
 
 app.set("view engine", "ejs");
-
-var bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-var mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost/yelpcamp");
+seedDB();
 
 // ----------------------------------------------
 //                   MongoDB CONFIG
 // ----------------------------------------------
 
-var campgroundSchema = new mongoose.Schema({
-    name: String,
-    image: String,
-    description: String
-});
-
-var Campground = mongoose.model("Campground", campgroundSchema);
+mongoose.connect("mongodb://localhost/yelpcamp");
 
 // ----------------------------------------------
 //                   VARIABLES
@@ -32,7 +31,7 @@ var Campground = mongoose.model("Campground", campgroundSchema);
 
         
 // ----------------------------------------------
-//                   ROUTES
+//                  CAMPGROUND ROUTES
 // ----------------------------------------------
 
 app.get("/", function(req,res){
@@ -47,12 +46,17 @@ app.get("/campgrounds", function(req,res){
             console.log(err);
         } else {
             // display all of the campgrounds on the main page
-            res.render("index", {sites: campgrnds});
+            res.render("campgrounds/index", {sites: campgrnds});
         }
     });
 });
 
-// UPDATE - Create an entry in the database for a new campground
+// NEW - show the form for adding a new campground to the database
+app.get("/campgrounds/new", function(req,res){
+    res.render("campgrounds/new");
+});
+
+// CREATE - Create an entry in the database for a new campground
 app.post("/campgrounds", function(req,res){
     // get data from form and build new object
     var newCampgnd = {
@@ -73,18 +77,70 @@ app.post("/campgrounds", function(req,res){
     
 });
 
-// NEW - show the form for adding a new campground to the database
-app.get("/campgrounds/new", function(req,res){
-    res.render("new");
-});
-
 //SHOW - show the page for detailed information about a specific campsite
 app.get("/campgrounds/:id", function(req,res){
     // retrieve the campground object from the database
-    var campground = Campground.findByID(req.params.id);
-    // show the campground details page
-    res.render("show", {campground: campground});
+    Campground.findById(req.params.id).populate("comments").exec(function(err, campground){
+        if(err){
+            console.log(err)
+        } else {
+            // show the campground details page
+            res.render("campgrounds/show", {campground: campground});
+        }
+    });
 });
+
+// EDIT
+
+// UPDATE
+
+// DESTROY
+
+// ----------------------------------------------
+//                  COMMENT ROUTES
+// ----------------------------------------------
+
+// INDEX
+
+// NEW
+app.get("/campgrounds/:id/comments/new", function(req,res){
+    Campground.findById(req.params.id, function(err, campground){
+        if(err){
+            console.log(err);
+        } else {
+            res.render("comments/new", {campground: campground});    
+        }
+    })
+})
+
+// CREATE
+app.post("/campgrounds/:id/comments", function(req,res){
+    Campground.findById(req.params.id, function(err, campground) {
+        if(err) {
+            console.log(err);
+            res.redirect("/campgrounds");
+        } else {
+            Comment.create(req.body.comment, function(err, comment){
+                if(err){
+                    console.log(err);
+                } else {
+                    campground.comments.push(comment);
+                    campground.save();
+                    res.redirect("/campgrounds/"+campground._id);
+                }                
+            })
+        }
+    })
+})
+
+// SHOW
+
+// EDIT
+
+// UPDATE
+
+// DESTROY
+
 
 // ----------------------------------------------
 //                   SERVER
