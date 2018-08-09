@@ -17,9 +17,9 @@ var express         = require("express"),
     seedDB          = require("./seeds");
     
 //routes
-var campgroundRoutes = require("./routes/campground"),
-    commentRoutes    = require("./routes/comment"),
-    indexRoutes      = require("./routes/user")
+var campgroundRoutes = require("./routes/campgrounds"),
+    commentRoutes    = require("./routes/comments"),
+    indexRoutes      = require("./routes/index")
 
 // =============== ENABLE DB ====================
 mongoose.connect("mongodb://localhost/yelpcamp");
