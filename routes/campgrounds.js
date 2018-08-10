@@ -4,7 +4,7 @@ var express     = require("express"),
     Campground = require("../models/campground");
 
 // INDEX - Show the listing of all the campgrounds
-router.get("/campgrounds", function(req,res){
+router.get("/", function(req,res){
     // Retrieve all of the campgrounds from the database
     Campground.find({}, function(err, campgrnds){
         if(err){
@@ -17,17 +17,21 @@ router.get("/campgrounds", function(req,res){
 });
 
 // NEW - show the form for adding a new campground to the database
-router.get("/campgrounds/new", function(req,res){
+router.get("/new", isLoggedIn, function(req,res){
     res.render("campgrounds/new");
 });
 
 // CREATE - Create an entry in the database for a new campground
-router.post("/campgrounds", function(req,res){
+router.post("/", isLoggedIn, function(req,res){
     // get data from form and build new object
     var newCampgnd = {
         name: req.body.name,
         image: req.body.img,
-        description: req.body.desc
+        description: req.body.desc,
+        author: {
+            id: req.user._id,
+            username: req.user.username
+        }
     };
     
     // Add a new campground to the database
@@ -42,7 +46,7 @@ router.post("/campgrounds", function(req,res){
 });
 
 //SHOW - show the page for detailed information about a specific campsite
-router.get("/campgrounds/:id", function(req,res){
+router.get("/:id", function(req,res){
     // retrieve the campground object from the database
     Campground.findById(req.params.id).populate("comments").exec(function(err, campground){
         if(err){
@@ -55,10 +59,34 @@ router.get("/campgrounds/:id", function(req,res){
 });
 
 // EDIT
+router.get("/:id/edit", isLoggedIn, function(req,res){
+    // Retrieve the campground information from the DB
+    Campground.findById(req.params.id, function(err,campground){
+        if(err){
+            console.log("/");
+        } else {
+            // Render the form
+            res.render("campgrounds/edit", {campground: campground});
+        };
+    });
+})
 
 // UPDATE
 
 // DESTROY
+
+
+// ----------------------------------------------
+//                   FUNCTIONS
+// ----------------------------------------------
+
+// middleware function to check whether the user is already logged in
+function isLoggedIn(req, res, next){
+    if(req.isAuthenticated()){
+        return next();
+    }
+    res.redirect("/login");
+}
 
 
 module.exports = router;

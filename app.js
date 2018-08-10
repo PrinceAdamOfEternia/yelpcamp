@@ -55,8 +55,8 @@ app.use(function(req, res, next){
 
 // Add in the routes
 app.use(indexRoutes);
-app.use(campgroundRoutes);
-app.use(commentRoutes);
+app.use("/campgrounds" ,campgroundRoutes);
+app.use("/campgrounds/:id/comments" ,commentRoutes);
 
 // Seed the database for testing
 seedDB();
@@ -66,5 +66,5 @@ seedDB();
 // ----------------------------------------------
 
 app.listen(process.env.PORT,process.env.IP, function(){
-    console.log("Server is running...");
+    console.log("YelpCamp server is running...");
 });

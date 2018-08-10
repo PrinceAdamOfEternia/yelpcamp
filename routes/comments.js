@@ -1,13 +1,13 @@
 var express     = require("express"),
-    router      = express.Router(),
+    router      = express.Router({mergeParams: true}),
     // Mongoose models
     Campground  = require("../models/campground"),
     Comment     = require("../models/comment");
-
+    
 // INDEX
 
 // NEW
-router.get("/campgrounds/:id/comments/new", isLoggedIn, function(req,res){
+router.get("/new", isLoggedIn, function(req,res){
     Campground.findById(req.params.id, function(err, campground){
         if(err){
             console.log(err);
@@ -18,7 +18,7 @@ router.get("/campgrounds/:id/comments/new", isLoggedIn, function(req,res){
 });
 
 // CREATE
-router.post("/campgrounds/:id/comments", isLoggedIn, function(req,res){
+router.post("/", isLoggedIn, function(req,res){
     Campground.findById(req.params.id, function(err, campground) {
         if(err) {
             console.log(err);
@@ -28,6 +28,12 @@ router.post("/campgrounds/:id/comments", isLoggedIn, function(req,res){
                 if(err){
                     console.log(err);
                 } else {
+                    var author = {
+                        id: req.user._id,
+                        username: req.user.username
+                    };
+                    comment.author = author;
+                    comment.save();
                     campground.comments.push(comment);
                     campground.save();
                     res.redirect("/campgrounds/"+campground._id);
