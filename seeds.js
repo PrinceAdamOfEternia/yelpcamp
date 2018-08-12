@@ -1,6 +1,8 @@
-var mongoose = require("mongoose");
-var Campground = require("./models/campground");
-var Comment   = require("./models/comment");
+var mongoose    = require("mongoose"),
+    Campground  = require("./models/campground"),
+    Comment     = require("./models/comment"),
+    User        = require("./models/user");
+
  
 var data = [
     {
@@ -43,7 +45,7 @@ var data = [
         image: "https://kgrahamjourneys.files.wordpress.com/2013/05/0082_001.jpg", 
         description: "Sheltered beach side, hike-in campsite"
     }
-]
+];
  
 function seedDB(){
    //Remove all campgrounds
@@ -57,30 +59,46 @@ function seedDB(){
                 console.log(err);
             }
             console.log("removed comments!");
-             //add a few campgrounds
-            data.forEach(function(seed){
-                Campground.create(seed, function(err, campground){
-                    if(err){
-                        console.log(err)
-                    } else {
-                        console.log("added a campground");
-                        //create a comment
-                        Comment.create(
-                            {
-                                text: "This place is great, but I wish there was internet",
-                                author: "Homer"
-                            }, function(err, comment){
-                                if(err){
-                                    console.log(err);
-                                } else {
-                                    campground.comments.push(comment);
-                                    campground.save();
-                                    console.log("Created new comment");
-                                }
-                            });
-                    }
-                });
+            // add a default user
+            // var defAuthor;
+            User.findById("5b6c1beaec1194097ff2e2fc", function(err,user){
+                if(err){
+                    console.log("ERROR: default user does not exist");
+                } else {
+                    var defAuthor = {
+                        id: user._id,
+                        username: user.username
+                    };
+                    console.log(defAuthor);
+                    // add a few campgrounds
+                    data.forEach(function(seed){
+                        Campground.create(seed, function(err, campground){
+                            if(err){
+                                console.log(err);
+                            } else {
+                                campground.author = defAuthor;
+                                console.log("added a campground");
+                                //create a comment
+                                Comment.create(
+                                    {
+                                        text: "This place is great, but I wish there was internet"
+                                    }, function(err, comment){
+                                        if(err){
+                                            console.log(err);
+                                        } else {
+                                            comment.author = defAuthor;
+                                            comment.save();
+                                            campground.comments.push(comment);
+                                            campground.save();
+                                            console.log("Created new comment");
+                                        }
+                                    });
+                            }
+                        });
+                    });
+                }
             });
+            
         });
     }); 
 }
