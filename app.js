@@ -6,6 +6,7 @@
 var express         = require("express"),
     bodyParser      = require("body-parser"),
     mongoose        = require("mongoose"),
+    methodOverride  = require("method-override"),
     // Authentication packages
     passport        = require("passport"),
     LocalStrategy   = require("passport-local"),
@@ -30,6 +31,7 @@ var app = express();
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
+app.use(methodOverride("_method"));
 
 // Set up for user authentication
 app.use(require("express-session")(
