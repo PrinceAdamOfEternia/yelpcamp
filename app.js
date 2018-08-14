@@ -7,6 +7,7 @@ var express         = require("express"),
     bodyParser      = require("body-parser"),
     mongoose        = require("mongoose"),
     methodOverride  = require("method-override"),
+    flash           = require("connect-flash"),
     // Authentication packages
     passport        = require("passport"),
     LocalStrategy   = require("passport-local"),
@@ -33,7 +34,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 
-// Set up for user authentication
 app.use(require("express-session")(
     {
         secret: "This is the YelpCamp secret",
@@ -42,6 +42,9 @@ app.use(require("express-session")(
     }
 ));
 
+app.use(flash());
+
+// Set up for user authentication
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -52,6 +55,8 @@ passport.deserializeUser(User.deserializeUser());
 // Provide the currentUser to all views (uses middleware)
 app.use(function(req, res, next){
     res.locals.currentUser = req.user;
+    res.locals.error = req.flash("error");
+    res.locals.success = req.flash("success");
     next();
 });
 
