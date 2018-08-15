@@ -30,6 +30,7 @@ router.post("/", middleware.isLoggedIn, function(req,res){
     // get data from form and build new object
     var newCampgnd = {
         name: req.body.name,
+        price: req.body.price,
         image: req.body.img,
         description: req.body.desc,
         author: {

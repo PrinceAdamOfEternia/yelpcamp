@@ -13,3 +13,21 @@
 #delete-btn {
     display: inline;
 }
+
+#campground-grid {
+    display: flex; 
+    flex-wrap: wrap;
+}
+
+.yelp-form {
+    width: 30%; 
+    margin: 30px auto;
+}
+
+.yelp-form-control {
+    margin: 3px 0;
+}
+
+.form-header {
+    text-align: center;
+}
