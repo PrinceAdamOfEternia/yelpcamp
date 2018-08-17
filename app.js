@@ -24,7 +24,8 @@ var campgroundRoutes = require("./routes/campgrounds"),
     indexRoutes      = require("./routes/index")
 
 // =============== ENABLE DB ====================
-mongoose.connect("mongodb://localhost/yelpcamp");
+// mongoose.connect("mongodb://localhost/yelpcamp");
+mongoose.connect(process.env.DATABASEURL)
 
 // =============== CONFIG APP ===================
 var app = express();

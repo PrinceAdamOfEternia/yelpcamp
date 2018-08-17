@@ -65,14 +65,14 @@ async function seedDB(){
     await Comment.remove({});
     console.log("Comments removed");
     console.log("----------------")
-    let user = await User.findById("5b6c1beaec1194097ff2e2fc");
+    let user = await User.findById("5b751d502af5ce0b522f9630");
     var defAuthor = {
                         id: user._id,
                         username: user.username
                     };
     for(const seed of seeds){
         let campground = await Campground.create(seed);
-        console.log("campground");
+        console.log("campground added");
         campground.author = defAuthor;
         let comment = await Comment.create(defComment);
         comment.author = defAuthor;
