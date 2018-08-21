@@ -21,12 +21,11 @@ var express         = require("express"),
 //routes
 var campgroundRoutes = require("./routes/campgrounds"),
     commentRoutes    = require("./routes/comments"),
-    indexRoutes      = require("./routes/index")
+    indexRoutes      = require("./routes/index");
 
 // =============== ENABLE DB ====================
 // mongoose.connect("mongodb://localhost/yelpcamp");
-// mongoose.connect("mongodb://devuser:d3vDBpw@ds121262.mlab.com:21262/beetroot-dev")
-mongoose.connect(process.env.DATABASEURL)
+mongoose.connect(process.env.DATABASEURL);
 
 // =============== CONFIG APP ===================
 var app = express();
