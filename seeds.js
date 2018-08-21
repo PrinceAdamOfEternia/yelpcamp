@@ -56,6 +56,7 @@ var seeds = [
 ];
 
 var defComment = {text: "This place is great, but I wish there was internet"};
+var defUser = process.env.YCUSER
 
 module.exports = seedDB;
 
@@ -65,7 +66,7 @@ async function seedDB(){
     await Comment.remove({});
     console.log("Comments removed");
     console.log("----------------")
-    let user = await User.findById("5b751d502af5ce0b522f9630");
+    let user = await User.findById(defUser);
     var defAuthor = {
                         id: user._id,
                         username: user.username
